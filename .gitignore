@@ -1,0 +1,8 @@
+# Rust build directory
+/target/
+
+# Dependency directories
+/Cargo.lock
+
+# Operating system files
+.DS_Store
