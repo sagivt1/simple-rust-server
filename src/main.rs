@@ -1,4 +1,5 @@
-use std::net::TcpListener;
+use std::io::prelude::*;
+use std::net::{TcpListener, TcpStream};
 
 // Main function for the web server
 fn main() {
@@ -22,8 +23,7 @@ fn main() {
         // if connection fails, panic and crash
         match stream {
             Ok(stream) => {
-                println!("Connection established!");
-                // todo: Handel Connection 
+                handle_connection(stream);
             }
             Err(e) => {
                 // log the error and continue listening for the next connection
@@ -32,4 +32,23 @@ fn main() {
         }
     }
 
+}
+
+// process incoming client connection
+fn handle_connection(mut stream : TcpStream) {
+
+    // buffer to hold incoming data (https request)
+    let mut buffer = [0; 1024];
+
+    // read data from strem
+    match stream.read(&mut buffer) {
+        Ok(_) => {
+            //convert buffer to readable string
+            let request = String::from_utf8_lossy(&buffer[..]);
+            println!("request:\n{}", request);
+        }
+        Err(e) => {
+            eprintln!("Failed to read stream: {}", e);
+        }
+    }
 }
