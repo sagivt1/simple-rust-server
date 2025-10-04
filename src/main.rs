@@ -40,15 +40,45 @@ fn handle_connection(mut stream : TcpStream) {
     // buffer to hold incoming data (https request)
     let mut buffer = [0; 1024];
 
-    // read data from strem
-    match stream.read(&mut buffer) {
-        Ok(_) => {
-            //convert buffer to readable string
-            let request = String::from_utf8_lossy(&buffer[..]);
-            println!("request:\n{}", request);
-        }
-        Err(e) => {
-            eprintln!("Failed to read stream: {}", e);
-        }
+    if let Err(e) = stream.read(&mut buffer){
+        eprintln!("Failed to read stream: {}", e);
+        return;
     }
+
+    // Get the requested path
+    // typically start with "GET /path HTTP/1.1..."
+    let get = b"GET / HTTP/1.1\r\n";
+
+    // check if the start of the buffer match the request for the root path
+    let (status_line, filename) = if buffer.starts_with(get) {
+        // Success -> root path was requested
+        ("HTTP/1.1 200 OK\r\n", "hello.html")
+    } else {
+        // Error -> any other path
+        ("HTTP/1.1 404 NOT FOUND\r\n", "404.html")
+    };
+
+    // Reading html content from file
+    let contents = std::fs::read_to_string(filename).expect("Could not read file");
+
+    // Constructing the response  
+    let respone = format!(
+        "{}Content-Length: {}\r\n\r\n{}",
+        status_line,
+        contents.len(),
+        contents
+    );   
+
+    // Write the full response to the stream
+    if let Err(e) = stream.write_all(respone.as_bytes()) {
+        eprintln!("Failed to write to stream: {}", e)
+    } 
+
+    // flush the stream to ensure all the data is send immediately.
+    if let Err(e) = stream.flush() {
+         eprintln!("Failed to flush stream: {}", e);
+    }
+
+    println!("Request handled, response sent.");
+   
 }
