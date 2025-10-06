@@ -1,5 +1,6 @@
 use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
+use std::thread;
 
 // Main function for the web server
 fn main() {
@@ -23,7 +24,9 @@ fn main() {
         // if connection fails, panic and crash
         match stream {
             Ok(stream) => {
-                handle_connection(stream);
+                thread::spawn(move || {
+                    handle_connection(stream);
+                });
             }
             Err(e) => {
                 // log the error and continue listening for the next connection
