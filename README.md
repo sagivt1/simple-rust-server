@@ -12,4 +12,16 @@ Basic web server for educatonal propeses build from scrath with rust.
 ## Getting Started
 
 ### Prerequisite
-- [rust]
+- [rust](https://rust-lang.org/) (with cargo)
+
+### Ruining the server
+
+1. **Clone the repository:**
+   ```bash
+   git clone sagivt1/simple-rust-server
+   cd simple-rust-server
+2. **Run the project:**
+   ```bash
+   cargo run
+3. **Access:**
+   Open your browser to [http://127.0.0.1:7878](http://127.0.0.1:7878)
