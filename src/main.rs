@@ -2,7 +2,8 @@ use std::io::prelude::*;
 use std::net::{TcpListener, TcpStream};
 use std::thread;
 
-// Main function for the web server
+/// Main function for the web server
+/// Binds to port and listens for incoming connections, spawn new thread for each connection
 fn main() {
     // Define address to bind "127.0.0.1:7878" (localhost) with port 7878.
     let listener = match TcpListener::bind("127.0.0.1:7878"){
@@ -37,7 +38,8 @@ fn main() {
 
 }
 
-// process incoming client connection
+/// process incoming client connection
+/// this function executed on a new thread
 fn handle_connection(mut stream : TcpStream) {
 
     // buffer to hold incoming data (https request)
